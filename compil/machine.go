@@ -4,12 +4,12 @@ import "io"
 
 type Machine struct {
 	code []*Instruction
-	ip int
+	ip   int
 
 	memory [30000]int
-	dp int
+	dp     int
 
-	input io.Reader
+	input  io.Reader
 	output io.Writer
 
 	readBuf []byte
@@ -17,9 +17,9 @@ type Machine struct {
 
 func NewMachine(instructions []*Instruction, in io.Reader, out io.Writer) *Machine {
 	return &Machine{
-		code: instructions,
-		input: in,
-		output: out,
+		code:    instructions,
+		input:   in,
+		output:  out,
 		readBuf: make([]byte, 1),
 	}
 }
@@ -37,13 +37,13 @@ func (m *Machine) Execute() {
 			m.dp += ins.Argument
 		case Left:
 			m.dp -= ins.Argument
-		case ReadChar:
-			for i := 0; i < ins.Argument; i++ {
-				m.readChar()
-			}
 		case PutChar:
 			for i := 0; i < ins.Argument; i++ {
 				m.putChar()
+			}
+		case ReadChar:
+			for i := 0; i < ins.Argument; i++ {
+				m.readChar()
 			}
 		case JumpIfZero:
 			if m.memory[m.dp] == 0 {
@@ -56,6 +56,8 @@ func (m *Machine) Execute() {
 				continue
 			}
 		}
+
+		m.ip++
 	}
 }
 
@@ -74,7 +76,7 @@ func (m *Machine) readChar() {
 func (m *Machine) putChar() {
 	m.readBuf[0] = byte(m.memory[m.dp])
 
-	n,err := m.output.Write(m.readBuf)
+	n, err := m.output.Write(m.readBuf)
 	if err != nil {
 		panic(err)
 	}
@@ -82,4 +84,3 @@ func (m *Machine) putChar() {
 		panic("wrong num bytes written")
 	}
 }
-
