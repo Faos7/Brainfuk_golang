@@ -1,4 +1,4 @@
-#Brainfuk compiller writen in Go
+# Brainfuk compiller writen in Go
 
 This is study project.
 
